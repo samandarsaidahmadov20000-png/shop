@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import Product from "../models/product.model";
 import multer from "multer";
 
+const upload = multer({ dest: "/uploads" });
+
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, price, stock, category, image } = req.body;
+    const { name, description, price, stock, category } = req.body;
 
     const product = await Product.create({
       name,
@@ -12,7 +14,7 @@ export const createProduct = async (req: Request, res: Response) => {
       price,
       stock,
       category,
-      image,
+      image: req?.file?.filename,
     });
 
     res.status(200).json({ product });
