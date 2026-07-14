@@ -2,14 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: string | JwtPayload;
-    }
-  }
-}
-
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.header("Authorization");
@@ -22,7 +14,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     const decoded = jwt.verify(token, process.env.KEY as string);
 
-    req.user = decoded;
+    req.user = decoded as {id: string; role: string};
 
     next();
   } catch (err: any) {
