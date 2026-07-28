@@ -106,7 +106,6 @@ export const updateCart = async (req: Request, res: Response) => {
     if (!userCart) {
       return res.status(404).json({ message: "Cart not found" });
     }
-
     let foundQuantity = userCart.items.find(
       (item: any) => item.product.toString() == userSendId,
     );

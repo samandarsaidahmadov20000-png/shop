@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config()
 import express from "express";
 import authRoute from "./routes/authRoute";
 import productRoute from "./routes/productRoute";
@@ -5,8 +7,17 @@ import dbConnect from "./config/db";
 import categoryRoute from "./routes/categoryRoute";
 import cartRoute from "./routes/cartRoute";
 import path from "path";
+import orderRout from "./routes/orderRoute";
+
+
 
 const app = express();
+
+
+
+
+
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -18,6 +29,8 @@ app.use("/products", productRoute);
 
 app.use("/category", categoryRoute);
 app.use("/cart", cartRoute);
+
+app.use("/order", orderRout);
 
 dbConnect();
 
