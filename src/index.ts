@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config()
+dotenv.config();
 import express from "express";
 import authRoute from "./routes/authRoute";
 import productRoute from "./routes/productRoute";
@@ -9,15 +9,15 @@ import cartRoute from "./routes/cartRoute";
 import path from "path";
 import orderRout from "./routes/orderRoute";
 
-
+import cors from "cors";
 
 const app = express();
 
-
-
-
-
-
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
