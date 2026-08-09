@@ -5,11 +5,11 @@ interface ICategory extends Document {
   description: string;
 }
 
-const productSchema = new Schema<ICategory>({
+const categorySchema = new Schema<ICategory>({
   name: { type: String, required: true, unique: true },
   description: { type: String },
 });
 
-const Category = mongoose.model<ICategory>("Category", productSchema);
+const Category = mongoose.model<ICategory>("Category", categorySchema);
 
 export default Category;
