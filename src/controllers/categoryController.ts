@@ -18,10 +18,26 @@ export const createCategory = async (req: Request, res: Response) => {
 };
 
 export const getCategories = async (req: Request, res: Response) => {
-  try {
-    const categories = await Category.find();
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
 
-    res.status(200).json({ categories });
+  try {
+    const { name } = req.query;
+
+    const criteria: any = {};
+
+    if (name) criteria.name = { $regex: name as string, $options: "i" };
+
+    const categories = await Category.find(criteria)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+    const count = await Product.countDocuments(criteria);
+    res.status(200).json({
+      categories,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -62,9 +78,8 @@ export const categoriesUpdate = async (req: Request, res: Response) => {
       { new: true, runValidators: true },
     );
 
-
-    if(!updateCategory) {
-     res.status(404).json({ message: "Category not found"})
+    if (!updateCategory) {
+      res.status(404).json({ message: "Category not found" });
     }
 
     res.status(200).json({ data: updateCategory });

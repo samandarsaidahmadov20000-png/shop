@@ -32,10 +32,31 @@ export const createProduct = async (req: Request, res: Response) => {
 };
 
 export const getProducts = async (req: Request, res: Response) => {
-  try {
-    const products = await Product.find().populate("category", "name");
+  // const { page = 1, limit = 10 } = req.query;
 
-    res.status(200).json(products);
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+
+  try {
+    const { name } = req.query;
+
+    const criteria: any = {};
+
+    if (name) criteria.name = { $regex: name as string, $options: "i" };
+
+    const products = await Product.find(criteria)
+      .populate("category", "name")
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Product.countDocuments(criteria);
+
+    res.status(200).json({
+      products,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -58,7 +79,7 @@ export const deleteProducts = async (req: Request, res: Response) => {
 export const upadetProducts = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description,price,stock,category } = req.body;
+    const { name, description, price, stock, category } = req.body;
 
     const updateData: any = { name, description, price, stock, category };
 
