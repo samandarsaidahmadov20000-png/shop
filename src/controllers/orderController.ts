@@ -83,9 +83,10 @@ export const getAllOrders = async (req: Request, res: Response) => {
   
   try {
     
-    const allHistoryOrders  = await Order.find({});
+    const allHistoryOrders  = await Order.find({}).populate("items.product","name image price")
 
 
+    
     
     res.status(200).json({allOrderHistory: allHistoryOrders})
     
