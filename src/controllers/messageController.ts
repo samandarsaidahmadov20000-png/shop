@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Message from "../models/message";
+import User from "../models/auth";
 
 export const createMessage = async (req: Request, res: Response) => {
   try {
@@ -38,8 +39,13 @@ export const getMessage = async (req: Request, res: Response) => {
 
 export const getConversations = async (req: Request, res: Response) => {
   try {
-    const conversations = await Message.distinct("conversationId");
-    res.json({conversations})
+    const conversationIds = await Message.distinct("conversationId");
+
+    const users = await User.find({ _id: { $in: conversationIds } }).select(
+      "name email",
+    );
+
+    res.json({ conversations: users });
   } catch (error: any) {
     res.status(403).json({ message: error.message });
   }
