@@ -1,4 +1,4 @@
-import { createProduct, deleteProducts, getProducts, upadetProducts } from "../controllers/productController";
+import { createProduct, deleteProducts, getOneProducts, getProducts, upadetProducts } from "../controllers/productController";
 import { Router } from "express";
 import authMiddleware from "../middleware/authMiddleware";
 import roleMiddleware from "../middleware/adminMiddleware";
@@ -21,7 +21,9 @@ const upload = multer({storage: multer.memoryStorage()})
 
 router.post("/", authMiddleware, roleMiddleware("admin"), upload.single('image'), createProduct);
 
-router.get("/", getProducts)
+router.get("/", getProducts);
+
+router.get("/:id", getOneProducts)
 
 router.delete("/:id", authMiddleware, roleMiddleware("admin"), deleteProducts)
 

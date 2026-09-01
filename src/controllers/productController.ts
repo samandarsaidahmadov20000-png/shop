@@ -100,3 +100,14 @@ export const upadetProducts = async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getOneProducts = async (req: Request, res: Response) => {
+  try {
+    const item = await Product.findById(req.params.id);
+
+    if (!item) return res.status(404).json({ message: "Item not found" });
+    res.json(item);
+  } catch (error: any) {
+    res.status(403).json({ error: error.message });
+  }
+};
