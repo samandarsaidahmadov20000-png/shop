@@ -38,11 +38,12 @@ export const getProducts = async (req: Request, res: Response) => {
   const limit = Number(req.query.limit) || 10;
 
   try {
-    const { name } = req.query;
+    const { name,category} = req.query;
 
     const criteria: any = {};
 
     if (name) criteria.name = { $regex: name as string, $options: "i" };
+    if (category) criteria.category = category;
 
     const products = await Product.find(criteria)
       .populate("category", "name")
