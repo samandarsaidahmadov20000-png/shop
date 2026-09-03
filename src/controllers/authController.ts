@@ -20,7 +20,9 @@ export const authRegister = async (req: Request, res: Response, next: NextFuncti
             role: 'user'
         })
 
-        res.status(201).json({ message: 'User registered successfully' })
+        const token = jwt.sign({id: user._id, role: user.role}, process.env.KEY as string, {expiresIn: '4h'})
+
+        res.status(201).json({token})
 
 
     } catch (err: any) {
