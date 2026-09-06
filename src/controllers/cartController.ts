@@ -3,41 +3,45 @@ import Cart from "../models/cart.model";
 import Product from "../models/product.model";
 
 export const createCart = async (req: Request, res: Response) => {
-  // const { items } = req.body;
-
-  const { productId, quantity } = req.body;
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const userId = req.user.id;
-
-    const foundProduct = await Product.findById(productId);
-    if (!foundProduct) {
-      return res.status(404).json({ message: "not found product" });
-    }
+    const userId = req.user?.id;
+    const { items } = req.body;
 
     let findCartUser = await Cart.findOne({ user: userId });
 
     if (!findCartUser) {
-      const createdCart = await Cart.create({
-        user: userId,
-        items: [{ product: productId, quantity }],
-      });
-      return res.status(200).json({ createdCart });
-    }
-
-    const foundCart = findCartUser.items.find(
-      (item: any) => item.product.toString() == productId,
-    );
-    if (foundCart) {
-      foundCart.quantity += quantity;
+      findCartUser = await Cart.create({ user: userId, items });
     } else {
-      findCartUser.items.push({ product: productId, quantity });
-    }
+      for (const newItem of items) {
+        const product = await Product.findById(newItem.productId);
 
-    await findCartUser.save();
+        if (!product) {
+          return res.status(404).json({ message: "Товар не найден" });
+        }
+
+        if (product.stock < newItem.quantity) {
+          return res.status(400).json({ message: "Недостаточно на складе" });
+        }
+
+        const existing = findCartUser.items.find(
+          (item) => item.product.toString() === newItem.productId,
+        );
+
+        if (existing) {
+          existing.quantity += newItem.quantity;
+        } else {
+          findCartUser.items.push({
+            product: newItem.productId,
+            quantity: newItem.quantity,
+          });
+        }
+      }
+      await findCartUser.save();
+    }
 
     res.status(200).json({ cart: findCartUser });
   } catch (err: any) {
