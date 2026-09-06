@@ -14,7 +14,14 @@ export const createCart = async (req: Request, res: Response) => {
     let findCartUser = await Cart.findOne({ user: userId });
 
     if (!findCartUser) {
-      findCartUser = await Cart.create({ user: userId, items });
+     
+      const cartItems = items.map((item: any) => ({
+        product: item.productId, 
+        quantity: item.quantity,
+      }))
+
+      findCartUser = await Cart.create({ user: userId, items: cartItems});
+
     } else {
       for (const newItem of items) {
         const product = await Product.findById(newItem.productId);
