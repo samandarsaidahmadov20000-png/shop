@@ -124,6 +124,9 @@ export const updateCart = async (req: Request, res: Response) => {
     if (foundQuantity) {
       foundQuantity.quantity = quantity;
     }
+   
+
+    userCart.items = userCart.items.filter((item: any) => item.quantity > 0)
 
     await userCart.save();
 
