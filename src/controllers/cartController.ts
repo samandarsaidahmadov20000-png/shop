@@ -14,14 +14,12 @@ export const createCart = async (req: Request, res: Response) => {
     let findCartUser = await Cart.findOne({ user: userId });
 
     if (!findCartUser) {
-     
       const cartItems = items.map((item: any) => ({
-        product: item.productId, 
+        product: item.productId,
         quantity: item.quantity,
-      }))
+      }));
 
-      findCartUser = await Cart.create({ user: userId, items: cartItems});
-
+      findCartUser = await Cart.create({ user: userId, items: cartItems });
     } else {
       for (const newItem of items) {
         const product = await Product.findById(newItem.productId);
@@ -69,7 +67,31 @@ export const getCart = async (req: Request, res: Response) => {
       "name price image",
     );
 
-    res.status(200).json({ cart: userCart });
+    //  for(let i = 0; i < userCart.cart.items.length; i++) {
+
+    //   // console.log(userCart.cart.items[i]);
+
+    //  }
+
+    if (!userCart) {
+      return res.status(403).json({ message: "cart emapty" });
+    }
+
+    let totalCount = 0;
+
+    let totalSum = 0;
+
+    for (let i = 0; i < userCart.items.length; i++) {
+      totalCount = totalCount + userCart.items[i].quantity;
+    }
+    for (let i = 0; i < userCart.items.length; i++) {
+      totalSum +=
+        (userCart.items[i].product as any).price * userCart.items[i].quantity;
+    }
+
+    console.log(totalSum);
+
+    res.status(200).json({ cart: userCart, totalCount,totalSum });
   } catch (error: any) {
     res.status(403).json({ message: error.message });
   }
@@ -124,9 +146,8 @@ export const updateCart = async (req: Request, res: Response) => {
     if (foundQuantity) {
       foundQuantity.quantity = quantity;
     }
-   
 
-    userCart.items = userCart.items.filter((item: any) => item.quantity > 0)
+    userCart.items = userCart.items.filter((item: any) => item.quantity > 0);
 
     await userCart.save();
 
