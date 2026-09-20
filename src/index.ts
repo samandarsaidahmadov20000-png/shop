@@ -29,11 +29,14 @@ const io = new Server(httpServer, {
 io.use(socketAuth);
 socketHandler(io);
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  }),
+app.use(cors({
+    origin: ["http://localhost:3000","https://next-shop-opal.vercel.app/"],
+  }
+
+),
 );
+
+// https://next-shop-opal.vercel.app/
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
