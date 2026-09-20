@@ -67,11 +67,7 @@ export const getCart = async (req: Request, res: Response) => {
       "name price image",
     );
 
-    //  for(let i = 0; i < userCart.cart.items.length; i++) {
 
-    //   // console.log(userCart.cart.items[i]);
-
-    //  }
 
     if (!userCart) {
       return res.status(403).json({ message: "cart emapty" });
