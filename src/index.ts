@@ -30,7 +30,7 @@ io.use(socketAuth);
 socketHandler(io);
 
 app.use(cors({
-    origin: ["http://localhost:3000","https://next-shop-opal.vercel.app"],
+    origin: ["http://localhost:3000","https://next-shop-opal.vercel.app","http://localhost:5173"],
   }
 
 ),
